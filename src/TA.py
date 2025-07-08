@@ -11,7 +11,11 @@ def movingAverage():
     dc.stockInfo.taIndicators["SMA200"] = prices.rolling(200).mean().iloc[-1].round(2) #200 day simple moving average
 
     #Exponential Moving Average
-    dc.stockInfo.taIndicators["EMA12"] = prices.ewm(12, adjust=False).mean().iloc[-1].round(2)
-    dc.stockInfo.taIndicators["EMA26"] = prices.ewm(26, adjust=False).mean().iloc[-1].round(2)
-    dc.stockInfo.taIndicators["EMA50"] = prices.ewm(50, adjust=False).mean().iloc[-1].round(2)
-    dc.stockInfo.taIndicators["EMA200"] = prices.ewm(200, adjust=False).mean().iloc[-1].round(2)
+    dc.stockInfo.taIndicators["EMA12"] = prices.ewm(12, adjust=False).mean().iloc[-1].round(2) #12 day exponential moving average
+    dc.stockInfo.taIndicators["EMA26"] = prices.ewm(26, adjust=False).mean().iloc[-1].round(2) #26 day exponential moving average
+    dc.stockInfo.taIndicators["EMA50"] = prices.ewm(50, adjust=False).mean().iloc[-1].round(2) #50 day exponential moving average
+    dc.stockInfo.taIndicators["EMA200"] = prices.ewm(200, adjust=False).mean().iloc[-1].round(2) #200 day exponential moving average
+
+def MACD():
+    dc.stockInfo.taIndicators["MACD"] = dc.stockInfo.taIndicators["EMA12"] - dc.stockInfo.taIndicators["EMA26"] #MACD
+    dc.stockInfo.taIndicators["Signal Line"] = dc.stockInfo.taIndicators["MACD"].ewm(9, adjust=False) #Signal line for MACD
