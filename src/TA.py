@@ -15,3 +15,7 @@ def movingAverage():
     dc.stockInfo.taIndicators["EMA26"] = prices.ewm(26, adjust=False).mean().iloc[-1].round(2)
     dc.stockInfo.taIndicators["EMA50"] = prices.ewm(50, adjust=False).mean().iloc[-1].round(2)
     dc.stockInfo.taIndicators["EMA200"] = prices.ewm(200, adjust=False).mean().iloc[-1].round(2)
+
+def MACD():
+    dc.stockInfo.taIndicators["MACD"] = dc.stockInfo.taIndicators["EMA12"] - dc.stockInfo.taIndicators["EMA26"]
+    dc.stockInfo.taIndicators["Signal Line"] = dc.stockInfo.taIndicators["MACD"].ewm(9, adjust=False).mean()
