@@ -19,3 +19,19 @@ def movingAverage():
 def MACD():
     dc.stockInfo.taIndicators["MACD"] = dc.stockInfo.taIndicators["EMA12"] - dc.stockInfo.taIndicators["EMA26"]
     dc.stockInfo.taIndicators["Signal Line"] = dc.stockInfo.taIndicators["MACD"].ewm(9, adjust=False).mean()
+
+def RSI():
+    prices = dc.stockInfo.prices200d[["Open", "High", "Low", "Close"]]
+    rsiCalc = pd.DataFrame()
+    for pricePoint in ["Open", "High", "Low", "Close"]:
+        prices["change_"+pricePoint] = prices[pricePoint].diff().round(2)
+        prices["gains_"+pricePoint] = prices["change_"+pricePoint].mask(prices["change_"+pricePoint] < 0, 0.0)
+        prices["losses_"+pricePoint] = -prices["change_"+pricePoint].mask(prices["change_"+pricePoint] > 0, 0.0)
+
+        rsiCalc["gainsAVG_"+pricePoint] = prices["gains_"+pricePoint].rolling(14).mean().round(2)
+        rsiCalc["lossesAVG_"+pricePoint] = prices["losses_"+pricePoint].rolling(14).mean().round(2)
+        rsiCalc["RS_"+pricePoint] = rsiCalc["gainsAVG_"+pricePoint]/rsiCalc["lossesAVG_"+pricePoint]
+        rsiCalc["RSI_"+pricePoint] = 100 - (100/(1+rsiCalc["RS_"+pricePoint]))
+
+    rsiCalc.iloc[-1][["RSI_Open", "RSI_High", "RSI_Low", "RSI_Close"]]
+    dc.stockInfo.taIndicators["RSI"] = [rsiCalc.iloc[-1][rsi] for rsi in ["RSI_Open", "RSI_High", "RSI_Low", "RSI_Close"]]
